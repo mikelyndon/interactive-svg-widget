@@ -1,0 +1,28 @@
+.App {
+  font-family: "Solway", sans-serif;
+  text-align: center;
+}
+
+/* body {
+  margin: 0;
+} */
+
+/* @media only screen and (min-width: 400px) {
+  .svgCanvas {
+    width: 320px;
+  }
+} */
+
+/* Medium devices (landscape tablets, 768px and up) */
+/* @media only screen and (min-width: 500px) {
+  .svgCanvas {
+    width: 460px;
+  }
+} */
+
+/* Large devices (laptops/desktops, 992px and up) */
+/* @media only screen and (min-width: 600px) {
+  .svgCanvas {
+    width: 520px;
+  }
+} */
