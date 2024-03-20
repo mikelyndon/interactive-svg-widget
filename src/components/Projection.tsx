@@ -9,26 +9,26 @@ export default function Projection({
   const { fixed } = useControls({
     fixed: { value: false },
   });
-  const bounds = svgRef?.current.getBoundingClientRect();
+  const bounds = svgRef?.current?.getBoundingClientRect();
   const [atan, setAtan] = useState(0);
   const [rotation, setRotation] = useState(0);
   const [length, setLength] = useState(1);
   const [coord, setCoord] = useState({ x: 0, y: 0 });
-  const handlePointerMove = (e: PointerEvent) => {
-    const xy = { x: e.clientX, y: e.clientY };
-    const x = xy.x - bounds.left - bounds.width * 0.5;
-    const y = xy.y - bounds.top - bounds.height * 0.5;
-    // setCoord({ x: Math.round(x), y: Math.round(y) });
-    setCoord({ x, y });
-    setAtan(Math.atan2(y, x));
-    setLength(fixed ? Math.cos(Math.atan2(y, x)) : 1);
-    setRotation(Math.round(Math.atan2(y, x) * (180 / Math.PI)));
+  const handlePointerMove: React.PointerEventHandler = (e: React.PointerEvent) => {
+    if (bounds) {
+      const xy = { x: e.clientX, y: e.clientY };
+      const x = xy.x - bounds.left - bounds.width * 0.5;
+      const y = xy.y - bounds.top - bounds.height * 0.5;
+      setCoord({ x, y });
+      setAtan(Math.atan2(y, x));
+      setLength(fixed ? Math.cos(Math.atan2(y, x)) : 1);
+      setRotation(Math.round(Math.atan2(y, x) * (180 / Math.PI)));
+    }
   };
   const clamp = (num: number, min: number, max: number) => {
     return Math.min(Math.max(num, min), max);
   };
   const radius = Math.hypot(coord.x, coord.y);
-  // const scale = 1;
   const scale = clamp(
     (Math.hypot(coord.x, coord.y) / 260) * 2 * length,
     0.1,
@@ -80,7 +80,6 @@ export default function Projection({
         strokeWidth={4}
         strokeLinecap="round"
       />
-      {/* <g transform={`rotate(${rotation})`}> */}
       {fixed && (
         <line
           pointerEvents="none"

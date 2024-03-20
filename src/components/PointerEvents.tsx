@@ -1,19 +1,29 @@
 import { useState } from "react";
+import { useControls } from "leva"
+
 export default function PointerEvents() {
   const [pointerDown, setPointerDown] = useState(false);
-  const [pointerId, setPointerId] = useState(null);
-  //   const[(target, setTarget)] = useState(null);
+  const [pointerId, setPointerId] = useState<null | number>(null);
   const [hover, setHover] = useState("none");
-  const handlePointerOver = (e: PointerEvent) => {
-    console.log(e.target.className.baseVal);
-    setHover(e.target.className.baseVal);
+  const { capture } = useControls({
+    capture: { value: false },
+  })
+
+  const handlePointerOver: React.PointerEventHandler = (e: React.PointerEvent) => {
+    if (e.target instanceof SVGRectElement) {
+      setHover(e.target.className.baseVal);
+    }
   };
-  const handlePointerDown = (e: PointerEvent) => {
+  const handlePointerDown: React.PointerEventHandler = (e: React.PointerEvent) => {
     setPointerDown(true);
-    setPointerId(e.pointerId);
-    e.target.setPointerCapture(e.pointerId);
+    if (capture) {
+      setPointerId(e.pointerId);
+      if (e.target instanceof SVGRectElement) {
+        e.target.setPointerCapture(e.pointerId);
+      }
+    }
   };
-  const handlePointerUp = (e: PointerEvent) => {
+  const handlePointerUp: React.PointerEventHandler = () => {
     setPointerId(null);
     setPointerDown(false);
   };
@@ -53,7 +63,7 @@ export default function PointerEvents() {
         stroke="black"
         strokeWidth={4}
       />
-      <text
+      {capture && <text
         className="black_text"
         x="0"
         y="140"
@@ -61,7 +71,7 @@ export default function PointerEvents() {
         dominantBaseline="middle"
       >
         Pointer ID: {pointerId}
-      </text>
+      </text>}
       <text
         className="black_text"
         x="0"

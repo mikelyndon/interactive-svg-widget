@@ -4,7 +4,7 @@ import { useControls } from "leva";
 export default function PointerPosition() {
   const [client, setClient] = useState({ x: 0, y: 0 });
   const [coord, setCoord] = useState({ x: 0, y: 0 });
-  const svgRef = useRef();
+  const svgRef = useRef<SVGSVGElement>(null);
   const bounds = svgRef?.current?.getBoundingClientRect();
 
   const { min_xy, calc_bounds, calc_viewbox } = useControls({
@@ -13,12 +13,12 @@ export default function PointerPosition() {
     min_xy: {
       value: { x: 0, y: 0 },
       step: 10,
-      min: { x: -200, y: -200 },
-      max: { x: 200, y: 200 },
+      min: -200,
+      max: 200,
     },
   });
 
-  const handlePointerMove = (evt: PointerEvent) => {
+  const handlePointerMove: React.PointerEventHandler = (evt: React.PointerEvent) => {
     if (bounds) {
       const xy = { x: evt.clientX, y: evt.clientY };
       const x = xy.x - bounds.left - 266;
@@ -29,12 +29,12 @@ export default function PointerPosition() {
   };
   const calculated = calc_viewbox
     ? {
-        x: -1 * (-200 - min_xy.x - Math.round(coord.x)),
-        y: -1 * (-120 - min_xy.y - Math.round(coord.y)),
-      }
+      x: -1 * (-200 - min_xy.x - Math.round(coord.x)),
+      y: -1 * (-120 - min_xy.y - Math.round(coord.y)),
+    }
     : calc_bounds
-    ? { x: Math.round(coord.x) + 200, y: Math.round(coord.y) + 120 }
-    : { x: client.x, y: client.y };
+      ? { x: Math.round(coord.x) + 200, y: Math.round(coord.y) + 120 }
+      : { x: client.x, y: client.y };
 
   return (
     <svg

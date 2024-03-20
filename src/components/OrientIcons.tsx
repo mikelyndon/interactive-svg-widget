@@ -12,24 +12,23 @@ export default function OrientIcons({
 }: {
   svgRef: React.RefObject<SVGSVGElement>;
 }) {
-  const bounds = svgRef?.current.getBoundingClientRect();
+  const bounds = svgRef?.current?.getBoundingClientRect();
   const [atan, setAtan] = useState(0);
   const [rotation, setRotation] = useState(0);
-  const [coord, setCoord] = useState({ x: 0, y: 0 });
 
   const { orient } = useControls({
     orient: { value: false },
   });
 
-  const handlePointerMove = (e: PointerEvent) => {
-    e.target.setPointerCapture(e.poinerId);
-    const xy = { x: e.clientX, y: e.clientY };
-    const x = xy.x - bounds.left - 260;
-    const y = xy.y - bounds.top - 260;
-    console.log(x, y);
-    setCoord({ x: Math.round(x), y: Math.round(y) });
-    setAtan(Math.atan2(y, x));
-    setRotation(Math.atan2(y, x) * (180 / Math.PI));
+  const handlePointerMove: React.PointerEventHandler = (e: React.PointerEvent) => {
+    if (e.target instanceof SVGElement && bounds) {
+      e.target.setPointerCapture(e.pointerId);
+      const xy = { x: e.clientX, y: e.clientY };
+      const x = xy.x - bounds.left - 260;
+      const y = xy.y - bounds.top - 260;
+      setAtan(Math.atan2(y, x));
+      setRotation(Math.atan2(y, x) * (180 / Math.PI));
+    }
   };
   const sect = Math.abs(50 * 2 * (atan / (Math.PI * 2)) * Math.PI);
   const arc = Math.abs(50 * 2 * (1 - Math.abs(atan) / (Math.PI * 2)) * Math.PI);
@@ -37,7 +36,6 @@ export default function OrientIcons({
   return (
     <g onPointerMove={handlePointerMove}>
       <rect
-        // style={{ cursor: "crosshair" }}
         x={-175}
         y={-175}
         width={350}
@@ -57,7 +55,6 @@ export default function OrientIcons({
       <g transform={`rotate(${rotation})`}>
         <line
           pointerEvents="none"
-          //   style={Icon(rotation)}
           x1={0}
           y1={0}
           x2={150}
@@ -87,8 +84,6 @@ export default function OrientIcons({
         strokeWidth={2}
         fill="none"
         transform={atan > 0 ? `rotate(0)` : `rotate(${rotation})`}
-        // strokeDasharray={atan > 0 ? `${sect} ${arc}` : `${arc} ${sect}`}
-        // transform={`rotate(${rotation})`}
         strokeDasharray={`${sect} ${arc}`}
       />
       <text x={0} y={160} textAnchor="middle" dominantBaseline="middle">
